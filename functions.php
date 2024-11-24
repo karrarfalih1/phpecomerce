@@ -26,7 +26,7 @@ function getAllData($table, $where = null, $values = null)
     }
     return $count;
 }
-
+//داله لاضافه البيانات
 function insertData($table, $data, $json = true)
 {
     global $con;
@@ -140,6 +140,18 @@ function checkAuthenticate()
     } else {
         exit;
     }
+/////////داله لتطبع لنا اذا حدث خطا 
+
+
 
     // End 
 }
+function printFailure($message="none"){
+    print_r(  json_encode(array("status"=>"failure","message"=>$message)));
+  }
+  
+  /////////داله لتطبع لنا اذا الامور تمام ا 
+  
+  function printSuccess(){
+      echo  json_encode(array("status"=>"success"));
+    }
