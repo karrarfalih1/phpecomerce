@@ -1,7 +1,7 @@
 
 <?php
 //في هذا السطر عرفت الهوست وعرفت اسم قاعدة البيانات الي انا اريد ارتبط بيها 
-$dsn = "mysql:host=localhost;dbname=ecomercee";
+$dsn = "mysql:host=karrar.rf.gd;dbname=if0_37777222_ecommerce";
 //يعني يستطيع الوصول لكل البيانات 
 $user = "root";
 // خليت كلمة المرور فارغة 
@@ -21,7 +21,7 @@ try {
    header("Access-Control-Allow-Methods: POST, OPTIONS , GET");
    include "functions.php";
    if (!isset($notAuth)) {
-      // checkAuthenticate();
+       checkAuthenticate();
    }
 } catch (PDOException $e) {
    echo $e->getMessage();
