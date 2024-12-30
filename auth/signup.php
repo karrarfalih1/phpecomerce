@@ -4,10 +4,10 @@ include "../conectphp.php";
 
 $username=filterRequest("username");
 //sha1 هي داله لتشفير البيانات
-$password=sha1("password");
+$password=sha1($_POST['password']);
 $email=filterRequest("email");
 $phone=filterRequest("phone");
-$verfiycode="0";
+$verfiycode=rand(10000,99999);
 //يجب ان نتحقق  من ان الايميل او رقم الهاتف  غير موجود اصلا حتى لا يتكرر
 $stmt=$con->prepare("SELECT * FROM users WHERE users_email=? OR users_phone=?");
 
@@ -25,9 +25,12 @@ if($count>0){
         "users_password"=>$password,
         "users_email"=>$email,
         "users_phone"=>$phone,
-        "users_verfiycode"=>"0",
+        //من اجل توليد رقم عشوائي 
+        "users_verfiycode"=>$verfiycode,
 
     );
+///داله سويناها حته نرسل من خلالها  الرقم العشوائي
+    sendEmail($email,"Verfiy Code Ecommerce","Verfiy Code $verfiycode");
     //هذه داله الاضافه موجوده في  ملف الفنكشن  يجب ان نكتب فيها اسم الحقل و البيانات
     insertData("users",$data) ;
 }

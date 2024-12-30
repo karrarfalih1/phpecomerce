@@ -1,11 +1,11 @@
 
 <?php
 //في هذا السطر عرفت الهوست وعرفت اسم قاعدة البيانات الي انا اريد ارتبط بيها 
-$dsn = "mysql:host=karrar.rf.gd;dbname=if0_37777222_ecommerce";
+$dsn = "mysql:host=localhost;dbname=u414227216_ecommerce";
 //يعني يستطيع الوصول لكل البيانات 
-$user = "root";
+$user = "u414227216_karrarfalih";
 // خليت كلمة المرور فارغة 
-$pass = "";
+$pass = "kaR2001@1002Rar";
 
 //حته اخلي يدعم اللغة العربية
 $option = array(
@@ -21,7 +21,7 @@ try {
    header("Access-Control-Allow-Methods: POST, OPTIONS , GET");
    include "functions.php";
    if (!isset($notAuth)) {
-       checkAuthenticate();
+     //  checkAuthenticate();
    }
 } catch (PDOException $e) {
    echo $e->getMessage();

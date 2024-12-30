@@ -11,13 +11,41 @@ function filterRequest($requestname)
   return  htmlspecialchars(strip_tags($_POST[$requestname]));
 }
 
-function getAllData($table, $where = null, $values = null)
+function getAllData($table, $where = null, $values = null,$json=true)
+{
+    global $con;
+    $data = array();
+    if($where==null){
+        $stmt = $con->prepare("SELECT  * FROM $table");
+    }else{
+        $stmt = $con->prepare("SELECT  * FROM $table WHERE   $where ");
+    }
+    $stmt->execute($values);
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $count  = $stmt->rowCount();
+    if($json==true){
+        if ($count > 0){
+            echo json_encode(array("status" => "success", "data" => $data));
+        } else {
+            echo json_encode(array("status" => "failure"));
+            return $count;
+        }
+    }else{
+    if($count>0){
+        return $data;
+    }else{
+
+    }return json_encode(array("status" => "failure"));
+    }
+    
+}
+function getData($table, $where = null, $values = null)
 {
     global $con;
     $data = array();
     $stmt = $con->prepare("SELECT  * FROM $table WHERE   $where ");
     $stmt->execute($values);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $count  = $stmt->rowCount();
     if ($count > 0){
         echo json_encode(array("status" => "success", "data" => $data));
@@ -53,30 +81,46 @@ function insertData($table, $data, $json = true)
 }
 
 
-function updateData($table, $data, $where, $json = true)
+function updateData($table, $data, $where, $whereValues = [], $json = true)
 {
     global $con;
-    $cols = array();
-    $vals = array();
+    try {
+        $cols = [];
+        $vals = [];
 
-    foreach ($data as $key => $val) {
-        $vals[] = "$val";
-        $cols[] = "`$key` =  ? ";
-    }
-    $sql = "UPDATE $table SET " . implode(', ', $cols) . " WHERE $where";
+        // إعداد الأعمدة والقيم
+        foreach ($data as $key => $val) {
+            $cols[] = "`$key` = ?";
+            $vals[] = $val;
+        }
 
-    $stmt = $con->prepare($sql);
-    $stmt->execute($vals);
-    $count = $stmt->rowCount();
-    if ($json == true) {
-    if ($count > 0) {
-        echo json_encode(array("status" => "success"));
-    } else {
-        echo json_encode(array("status" => "failure"));
+        // إنشاء SQL
+        $sql = "UPDATE `$table` SET " . implode(',', $cols) . " WHERE $where";
+
+        // دمج القيم مع قيم الشرط
+        $allValues = array_merge($vals, $whereValues);
+
+        // إعداد الاستعلام
+        $stmt = $con->prepare($sql);
+
+        // تنفيذ الاستعلام
+        $stmt->execute($allValues);
+
+        $count = $stmt->rowCount();
+
+        if ($json) {
+            echo json_encode(["status" => $count > 0 ? "success" : "failure"]);
+        }
+
+        return $count;
+    } catch (PDOException $e) {
+        if ($json) {
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        }
+        return false;
     }
-    }
-    return $count;
 }
+
 
 function deleteData($table, $where, $json = true)
 {
@@ -157,8 +201,8 @@ function printFailure($message="none"){
     }
 
 function sendEmail($to,$title,$body){
-  $header="From: najy@gmail.com "."\n"."CC: karrarleagle512Gmail.com";
+  $header="From: karrar171320@gmail.com "."\n"."CC: karrarleagle512Gmail.com";
 //داله جاهزة لارسال البريد الالكتروني
 mail($to,$title,$body,$header);
-echo "success send Email";
+//echo "success send Email";
     }
